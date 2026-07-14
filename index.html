@@ -23,59 +23,45 @@
       <p class="text-orange-400">🔥 7 day streak</p>
     </div>
 
-    <div class="space-y-4 mb-8">
-      <button onclick="completeQuest()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">🏆 Daily Quest (+50 XP)</button>
-      <button onclick="logWorkout()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">🏋️ Log Workout (+35 XP)</button>
-      <button onclick="showExercises()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">📋 Exercise Library (with videos)</button>
-      <button onclick="generatePlan()" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-3xl text-xl font-bold">✨ Generate Plan</button>
-    </div>
-  </div>
-
-  <div id="exerciseModal" class="hidden fixed inset-0 bg-black/90 flex items-end">
-    <div class="bg-zinc-900 w-full rounded-t-3xl p-6 max-h-[85vh] overflow-auto">
-      <h2 class="text-2xl font-bold mb-6">Exercise Library</h2>
-      <div id="exerciseList" class="space-y-8"></div>
-      <button onclick="hideExercises()" class="mt-8 w-full bg-zinc-700 py-4 rounded-2xl">Close</button>
+    <div class="space-y-4">
+      <button onclick="completeQuest()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg">🏆 Daily Quest (+50 XP)</button>
+      <button onclick="logWorkout()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg">🏋️ Log Workout (+35 XP)</button>
+      <button onclick="showExercises()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg">📋 Exercise Library</button>
+      <button onclick="generatePlan()" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-3xl text-xl font-bold">✨ Generate Personalized Plan</button>
     </div>
   </div>
 
   <script>
     let xp = 245, level = 1;
 
-    const exercises = [
-      {name: "Push-ups", desc: "3 sets of 15", video: "https://www.youtube.com/embed/iodx9Z4z9bU"},
-      {name: "Squats", desc: "4 sets of 12", video: "https://www.youtube.com/embed/yaP4p4z0z0I"},
-      {name: "Plank", desc: "Hold 45 seconds", video: "https://www.youtube.com/embed/pSHjTRCQxP0"},
-    ];
-
-    function showExercises() {
-      const container = document.getElementById('exerciseList');
-      container.innerHTML = exercises.map(ex => `
-        <div class="bg-zinc-800 rounded-3xl p-5">
-          <p class="font-bold text-xl">${ex.name}</p>
-          <p class="text-zinc-400">${ex.desc}</p>
-          <iframe class="w-full mt-4 aspect-video rounded-2xl" src="${ex.video}" frameborder="0" allowfullscreen></iframe>
-          <button onclick="logExercise('${ex.name}')" class="mt-4 w-full bg-emerald-600 py-3 rounded-2xl">Log (+25 XP)</button>
-        </div>
-      `).join('');
-      document.getElementById('exerciseModal').classList.remove('hidden');
-    }
-
-    function hideExercises() {
-      document.getElementById('exerciseModal').classList.add('hidden');
-    }
-
-    function logExercise(name) {
-      xp += 25;
-      if (xp >= level * 120) { level++; xp = 0; alert("LEVEL UP!"); }
+    function update() {
       document.getElementById('xp').textContent = xp + " XP";
       document.getElementById('level').textContent = "Lv. " + level;
-      alert(`Logged ${name}!`);
     }
 
-    function completeQuest() { xp += 50; logExercise("Daily Quest"); }
-    function logWorkout() { xp += 35; logExercise("Workout"); }
-    function generatePlan() { alert("Plan Generated!"); }
+    function completeQuest() {
+      xp += 50;
+      if (xp >= level * 120) { level++; xp = 0; alert("🎉 LEVEL UP!"); }
+      update();
+      alert("Quest Complete!");
+    }
+
+    function logWorkout() {
+      xp += 35;
+      if (xp >= level * 120) { level++; xp = 0; alert("🎉 LEVEL UP!"); }
+      update();
+      alert("Workout Logged!");
+    }
+
+    function showExercises() {
+      alert("Exercise Library:\n\n1. Push-ups - 3 sets\n2. Squats - 4 sets\n3. Plank - 45 seconds\n\nLog them using the buttons above.");
+    }
+
+    function generatePlan() {
+      alert("🧠 Personalized Plan Ready!\n\nPush Day Focus");
+    }
+
+    update();
   </script>
 </body>
 </html>
