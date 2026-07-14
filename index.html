@@ -3,173 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Arise</title>
+  <title>ProFit++</title>
   <script src="https://cdn.tailwindcss.com"></script>
   
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen p-4 pb-16">
-  <div class="max-w-md mx-auto">
+<body class="bg-zinc-950 text-white min-h-screen pb-24">
+  <div class="max-w-md mx-auto p-4">
 
     <header class="flex justify-between items-center mb-6">
-      <h1 class="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">ARISE ⚔️</h1>
+      <h1 class="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">ProFit++ ⚔️</h1>
       <div class="text-right">
         <div class="text-emerald-400 text-2xl font-bold" id="level">Lv. --</div>
         <div id="xp" class="text-zinc-400 text-sm font-medium">-- XP</div>
       </div>
     </header>
 
-    <div class="bg-zinc-900 rounded-3xl p-6 mb-6 border border-zinc-800">
-      <p class="text-zinc-500 uppercase tracking-wider text-xs font-bold">Hunter Rank</p>
-      <p id="name" class="text-3xl font-black mt-1">ProKr</p>
-      <div class="flex gap-3 mt-3">
-        <span class="text-orange-400 text-sm font-semibold bg-orange-950/40 px-3 py-1 rounded-full border border-orange-900/30">🔥 7 day streak</span>
-        <span class="text-purple-400 text-sm font-semibold bg-purple-950/40 px-3 py-1 rounded-full border border-purple-900/30">Class: S-Rank</span>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-4 mb-6">
-      <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between">
-        <div>
-          <p class="text-zinc-400 text-xs font-bold uppercase tracking-wider">🔥 Energy Logged</p>
-          <p class="text-2xl font-black mt-2 text-orange-400"><span id="calories">0</span> <span class="text-xs text-zinc-500 font-normal">kcal</span></p>
-        </div>
-        <div class="grid grid-cols-2 gap-1.5 mt-4">
-          <button onclick="addCalories(150)" class="bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-[10px] font-bold transition">+150 Snk</button>
-          <button onclick="addCalories(650)" class="bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 py-2 rounded-xl text-[10px] font-bold transition">+650 Meal</button>
+    <div id="page-dashboard" class="tab-page space-y-6">
+      <div class="bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+        <p class="text-zinc-500 uppercase tracking-wider text-xs font-bold">Hunter Rank</p>
+        <p id="name" class="text-3xl font-black mt-1">ProKr</p>
+        <div class="flex gap-3 mt-3">
+          <span class="text-orange-400 text-sm font-semibold bg-orange-950/40 px-3 py-1 rounded-full border border-orange-900/30">🔥 7 day streak</span>
+          <span class="text-cyan-400 text-sm font-semibold bg-cyan-950/40 px-3 py-1 rounded-full border border-cyan-900/30">Class: S-Rank</span>
         </div>
       </div>
 
-      <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between">
-        <div>
-          <p class="text-zinc-400 text-xs font-bold uppercase tracking-wider">💧 Elixir Infused</p>
-          <p class="text-2xl font-black mt-2 text-cyan-400"><span id="water">0.0</span> <span class="text-xs text-zinc-500 font-normal">L</span></p>
-        </div>
-        <button onclick="addWater()" class="mt-4 w-full bg-zinc-800 hover:bg-zinc-700 py-2.5 rounded-xl text-xs font-bold transition flex justify-center items-center gap-1">
-          <span>+ 150 ml Flask</span>
-        </button>
-      </div>
-    </div>
-
-    <div class="space-y-4">
-      
-      <button onclick="completeQuest()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group">
-        <div class="flex items-center gap-3">
-          <span class="text-2xl group-hover:scale-110 transition">🏆</span>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between">
           <div>
-            <p class="font-bold text-base">Daily Gate Quest</p>
-            <p class="text-xs text-zinc-500">Complete standard physical baseline</p>
+            <p class="text-zinc-400 text-xs font-bold uppercase tracking-wider">🔥 Energy Logged</p>
+            <p class="text-2xl font-black mt-2 text-orange-400"><span id="calories">0</span> <span class="text-xs text-zinc-500 font-normal">kcal</span></p>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 mt-4">
+            <button onclick="addCalories(150)" class="bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-[10px] font-bold transition">+150 Snk</button>
+            <button onclick="addCalories(650)" class="bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/20 py-2 rounded-xl text-[10px] font-bold transition">+650 Meal</button>
           </div>
         </div>
-        <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl">+50 XP</span>
-      </button>
-      
-      <button onclick="logWorkout()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group">
-        <div class="flex items-center gap-3">
-          <span class="text-2xl group-hover:scale-110 transition">🏋️</span>
+
+        <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between">
           <div>
-            <p class="font-bold text-base">Clear Instance Dungeon</p>
-            <p class="text-xs text-zinc-500">Log an intensive weight routine</p>
+            <p class="text-zinc-400 text-xs font-bold uppercase tracking-wider">💧 Elixir Infused</p>
+            <p class="text-2xl font-black mt-2 text-cyan-400"><span id="water">0.0</span> <span class="text-xs text-zinc-500 font-normal">L</span></p>
           </div>
+          <button onclick="addWater()" class="mt-4 w-full bg-zinc-800 hover:bg-zinc-700 py-2.5 rounded-xl text-xs font-bold transition">
+            + 100 ml Flask
+          </button>
         </div>
-        <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl">+35 XP</span>
-      </button>
-      
-      <div class="bg-zinc-900 rounded-3xl border border-zinc-800 overflow-hidden">
-        <button onclick="toggleSection('exercise-library', 'lib-arrow')" class="w-full p-5 text-left flex justify-between items-center bg-zinc-900/50 hover:bg-zinc-800/40 transition">
+      </div>
+
+      <div class="space-y-4">
+        <button onclick="completeQuest()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group">
           <div class="flex items-center gap-3">
-            <span class="text-xl">📋</span>
-            <span class="font-bold text-base">Visual Vault: Exercises</span>
+            <span class="text-2xl group-hover:scale-110 transition">🏆</span>
+            <div>
+              <p class="font-bold text-base">Daily Gate Quest</p>
+              <p class="text-xs text-zinc-500">Complete standard physical baseline</p>
+            </div>
           </div>
-          <span id="lib-arrow" class="text-zinc-500 text-xs transition-transform duration-200">Expand ▼</span>
+          <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl">+50 XP</span>
         </button>
-
-        <div id="exercise-library" class="hidden p-4 space-y-4 border-t border-zinc-800/60 bg-zinc-950/50">
-          <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800">
-            <div class="flex justify-between items-start mb-2">
-              <div>
-                <h4 class="font-black text-sm text-purple-400 tracking-wide">01 / PERFECT PUSH-UP</h4>
-                <p class="text-xs text-zinc-400">Focus: Chest, Anterior Deltoids, Triceps</p>
-              </div>
-              <span class="text-[10px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-400 font-mono">3 Sets x Max</span>
-            </div>
-            <div class="grid grid-cols-1 gap-2 mt-3">
-              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-zinc-800">
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/IODxDxX7oi4?si=demo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-              <p class="text-[11px] text-zinc-500 italic mt-1">💡 Keep core locked; don't sag hips. Touch chest down completely.</p>
+        
+        <button onclick="logWorkout()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl group-hover:scale-110 transition">🏋️</span>
+            <div>
+              <p class="font-bold text-base">Clear Instance Dungeon</p>
+              <p class="text-xs text-zinc-500">Log an intensive weight routine</p>
             </div>
           </div>
+          <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl">+35 XP</span>
+        </button>
+      </div>
+    </div>
 
-          <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800">
-            <div class="flex justify-between items-start mb-2">
-              <div>
-                <h4 class="font-black text-sm text-purple-400 tracking-wide">02 / DEEP BARBELL SQUAT</h4>
-                <p class="text-xs text-zinc-400">Focus: Quadriceps, Glutes, Hamstrings</p>
-              </div>
-              <span class="text-[10px] bg-zinc-800 px-2 py-0.5 rounded text-zinc-400 font-mono">4 Sets x 8 Reps</span>
-            </div>
-            <div class="grid grid-cols-1 gap-2 mt-3">
-              <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-zinc-800">
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/Uv_KzG_cEGs?si=demo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-              </div>
-              <p class="text-[11px] text-zinc-500 italic mt-1">💡 Drive through mid-foot; break parallel line at the bottom.</p>
-            </div>
+
+    <div id="page-exercises" class="tab-page space-y-4 hidden">
+      <h2 class="text-2xl font-black tracking-wide mb-2 text-cyan-400">VISUAL VAULT: EXERCISES</h2>
+      
+      <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <h4 class="font-black text-base text-white tracking-wide">01 / PERFECT PUSH-UP</h4>
+            <p class="text-xs text-zinc-400">Chest, Shoulders, Triceps</p>
           </div>
+          <span class="text-xs bg-zinc-800 px-2.5 py-1 rounded-xl text-zinc-400 font-mono">3 Sets x Max</span>
+        </div>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-zinc-800">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/IODxDxX7oi4" title="Push Up Form" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
       </div>
 
-      <button onclick="generateDynamicPlan()" class="w-full bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:opacity-95 shadow-lg shadow-purple-500/10 p-5 rounded-3xl text-left flex justify-between items-center transition font-bold group">
-        <div class="flex items-center gap-3">
-          <span class="text-xl group-hover:rotate-12 transition">✨</span>
+      <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-3">
+        <div class="flex justify-between items-start">
           <div>
-            <p class="text-base text-white font-black">Generate Interactive Blueprint</p>
-            <p class="text-xs text-purple-200 font-normal">Calculates dynamic diet macros & custom split</p>
+            <h4 class="font-black text-base text-white tracking-wide">02 / BARBELL SQUAT</h4>
+            <p class="text-xs text-zinc-400">Quadriceps, Glutes, Core</p>
           </div>
+          <span class="text-xs bg-zinc-800 px-2.5 py-1 rounded-xl text-zinc-400 font-mono">4 Sets x 8 Reps</span>
         </div>
-      </button>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-zinc-800">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/Uv_KzG_cEGs" title="Squat Form" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
 
-      <div id="blueprint-display" class="hidden bg-zinc-900 rounded-3xl border border-purple-900/40 p-5 space-y-4">
-        <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
-          <h3 class="font-black text-base text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">⚡ S-RANK CURRENT BLUEPRINT</h3>
-          <button onclick="document.getElementById('blueprint-display').classList.add('hidden')" class="text-zinc-500 hover:text-white text-xs">Dismiss ×</button>
-        </div>
-        
-        <div>
-          <h4 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">⚔️ Automated Routine Strategy</h4>
-          <div class="bg-zinc-950 rounded-xl p-3 border border-zinc-800 text-sm space-y-1 text-zinc-300 font-mono">
-            <div>• <span class="text-purple-400 font-bold">Push Focus:</span> Overhead Press (4x10), Incline Dumbbell (3x12)</div>
-            <div>• <span class="text-purple-400 font-bold">Pull Focus:</span> Weighted Pullups (3x8), Barbell Rows (4x10)</div>
-            <div>• <span class="text-purple-400 font-bold">Legs Focus:</span> Romanian Deadlifts (4x10), Calf Raises (3x15)</div>
+      <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <h4 class="font-black text-base text-white tracking-wide">03 / PULL-UP</h4>
+            <p class="text-xs text-zinc-400">Lats, Rhomboids, Biceps</p>
           </div>
+          <span class="text-xs bg-zinc-800 px-2.5 py-1 rounded-xl text-zinc-400 font-mono">3 Sets x 10 Reps</span>
         </div>
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-zinc-800">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/eGo4IYlbE5g" title="Pull Up Form" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
 
-        <div>
-          <h4 class="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">🍎 Target Macro Matrix Allocation</h4>
+
+    <div id="page-blueprint" class="tab-page space-y-6 hidden">
+      <div class="bg-gradient-to-r from-cyan-600 to-blue-600 p-6 rounded-3xl text-left shadow-lg shadow-cyan-500/10">
+        <h2 class="text-2xl font-black text-white">INTERACTIVE BLUEPRINT</h2>
+        <p class="text-xs text-cyan-100 mt-1">Calculates your target matrix configurations</p>
+        <button onclick="generateDynamicPlan()" class="mt-4 bg-white text-zinc-950 font-bold px-4 py-2.5 rounded-xl text-xs uppercase tracking-wider transition hover:bg-zinc-100">
+          🔄 Recalculate Plan
+        </button>
+      </div>
+
+      <div id="blueprint-display" class="space-y-6">
+        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-4">
+          <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest">🍎 S-Rank Diet Macros</h3>
+          
+          <div class="w-full h-32 rounded-2xl bg-zinc-950 overflow-hidden relative border border-zinc-800">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&auto=format&fit=crop&q=80" alt="Clean Meal" class="w-full h-full object-cover opacity-60">
+            <span class="absolute bottom-3 left-3 bg-zinc-950/80 px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wide text-orange-400 border border-zinc-800">RECOMMENDED DIET BASE</span>
+          </div>
+
           <div class="grid grid-cols-3 gap-2 text-center text-xs">
-            <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
+            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800">
               <div class="text-zinc-500 font-semibold mb-0.5">PROTEIN</div>
               <div class="font-black text-emerald-400 text-sm">175g</div>
             </div>
-            <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
+            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800">
               <div class="text-zinc-500 font-semibold mb-0.5">CARBS</div>
               <div class="font-black text-amber-400 text-sm">240g</div>
             </div>
-            <div class="bg-zinc-950 p-2.5 rounded-xl border border-zinc-800">
+            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800">
               <div class="text-zinc-500 font-semibold mb-0.5">FATS</div>
               <div class="font-black text-rose-400 text-sm">70g</div>
             </div>
           </div>
-          <p class="text-[10px] text-zinc-500 mt-2 text-center">Calculated distribution targeted at continuous lean mass compilation.</p>
+        </div>
+
+        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-3">
+          <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest">⚔️ Workout Split Blueprint</h3>
+          <div class="bg-zinc-950 rounded-xl p-4 border border-zinc-800 text-sm space-y-3 text-zinc-300 font-mono">
+            <div><span class="text-cyan-400 font-bold">• Push Day:</span> Bench Press (4x10), Overhead Press (3x12), Lateral Raises (4x15)</div>
+            <div><span class="text-cyan-400 font-bold">• Pull Day:</span> Barbell Rows (4x8), Lat Pulldowns (3x12), Hammer Curls (3x15)</div>
+            <div><span class="text-cyan-400 font-bold">• Legs Day:</span> Barbell Squats (4x8), Romanian Deadlifts (4x10), Leg Press (3x12)</div>
+          </div>
         </div>
       </div>
-      
-      <button onclick="resetProgress()" class="w-full border border-zinc-900 hover:border-red-950 hover:bg-red-950/20 text-zinc-600 hover:text-red-400 transition p-4 rounded-3xl text-xs font-bold tracking-widest uppercase mt-8">
+
+      <button onclick="resetProgress()" class="w-full border border-zinc-900 hover:border-red-950 hover:bg-red-950/20 text-zinc-600 hover:text-red-400 transition p-4 rounded-3xl text-xs font-bold tracking-widest uppercase mt-4">
         🚨 Factory Wipe Progress State
       </button>
     </div>
+
   </div>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-800 px-6 py-2 z-50">
+    <div class="max-w-md mx-auto flex justify-around items-center">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 py-2 text-cyan-400 font-bold text-xs transition">
+        <span class="text-xl">⚔️</span>
+        <span>Dashboard</span>
+      </button>
+      <button onclick="switchTab('exercises')" id="nav-exercises" class="flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition">
+        <span class="text-xl">📋</span>
+        <span>Exercises</span>
+      </button>
+      <button onclick="switchTab('blueprint')" id="nav-blueprint" class="flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition">
+        <span class="text-xl">✨</span>
+        <span>Blueprint</span>
+      </button>
+    </div>
+  </nav>
 
   <script>
     // Live Firebase Config
@@ -188,7 +208,7 @@
     const database = firebase.database();
     
     // Application core schema variables
-    let xp = 0, level = 1, calories = 0, water = 0.0;
+    let xp = 0, level = 0, calories = 0, water = 0.0;
     const userDbRef = database.ref("users/ProKr");
 
     // Listen for Realtime database synchronization updates
@@ -202,8 +222,7 @@
           water = data.water !== undefined ? data.water : 0.0;
           updateUI();
         } else {
-          // Cold boot defaults if DB node is wiped empty
-          xp = 0; level = 0; calories = 0; water = 0.0;
+          xp = 0; level = 1; calories = 0; water = 0.0;
           updateUI();
           saveUserData();
         }
@@ -241,60 +260,40 @@
       saveUserData();
     }
 
-    function completeQuest() {
-      addXp(50);
+    function completeQuest() { addXp(50); }
+    function logWorkout() { addXp(35); }
+    function addCalories(amount) { calories += amount; updateUI(); saveUserData(); }
+    function addWater() { water += 0.10; updateUI(); saveUserData(); }
+
+    // Multi-Page Tab Switching System
+    function switchTab(tabId) {
+      // Hide all pages
+      document.querySelectorAll('.tab-page').forEach(page => page.classList.add('hidden'));
+      // Remove active colors from tabs
+      document.getElementById('nav-dashboard').className = "flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition";
+      document.getElementById('nav-exercises').className = "flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition";
+      document.getElementById('nav-blueprint').className = "flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition";
+      
+      // Show selected page & highlight tab icon
+      document.getElementById('page-' + tabId).classList.remove('hidden');
+      document.getElementById('nav-' + tabId).className = "flex flex-col items-center gap-1 py-2 text-cyan-400 font-bold text-xs transition";
     }
 
-    function logWorkout() {
-      addXp(35);
-    }
-
-    function addCalories(amount) {
-      calories += amount;
-      updateUI();
-      saveUserData();
-    }
-
-    function addWater() {
-      water += 0.15;
-      updateUI();
-      saveUserData();
-    }
-
-    // Interactive UI engine toggles
-    function toggleSection(elementId, arrowId) {
-      const container = document.getElementById(elementId);
-      const arrow = document.getElementById(arrowId);
-      if(container.classList.contains('hidden')) {
-        container.classList.remove('hidden');
-        arrow.textContent = "Collapse ▲";
-      } else {
-        container.classList.add('hidden');
-        arrow.textContent = "Expand ▼";
-      }
-    }
-
-    // Dynamic Blueprint Renderer Engine
     function generateDynamicPlan() {
-      const displayPanel = document.getElementById('blueprint-display');
-      displayPanel.classList.remove('hidden');
-      displayPanel.scrollIntoView({ behavior: 'smooth' });
+      alert("⚡ Recalculating Matrix... Your S-Rank targets are synchronized!");
     }
 
     // Master Reset Protocol Execution
     function resetProgress() {
-      if (confirm("🚨 WARNING: This initiates a complete clean wipe of your data node. Reset all level configurations, XP bars, and calorie trackers back to zero?")) {
-        xp = 0;
-        level = 0;
-        calories = 0;
-        water = 0.0;
+      if (confirm("🚨 Reset all level configurations, XP bars, and calorie trackers back to zero?")) {
+        xp = 0; level = 0; calories = 0; water = 0.0;
         updateUI();
         saveUserData();
-        document.getElementById('blueprint-display').classList.add('hidden');
+        switchTab('dashboard');
       }
     }
 
-    // Spin engine synchronization thread loops
+    // Spin up engine
     initDatabaseListener();
   </script>
 </body>
