@@ -9,7 +9,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen p-4">
+<body class="bg-zinc-950 text-white min-h-screen p-4 pb-12">
   <div class="max-w-md mx-auto">
 
     <header class="flex justify-between items-center mb-8">
@@ -26,11 +26,71 @@
       <p class="text-orange-400">🔥 7 day streak</p>
     </div>
 
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-zinc-900 rounded-3xl p-5 flex flex-col justify-between">
+        <div>
+          <p class="text-zinc-400 text-sm">🔥 Daily Calories</p>
+          <p class="text-2xl font-bold mt-1"><span id="calories">0</span> <span class="text-xs text-zinc-500 font-normal">kcal</span></p>
+        </div>
+        <button onclick="addCalories()" class="mt-4 w-full bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-xs font-semibold">+ 250 kcal</button>
+      </div>
+
+      <div class="bg-zinc-900 rounded-3xl p-5 flex flex-col justify-between">
+        <div>
+          <p class="text-zinc-400 text-sm">💧 Water Intake</p>
+          <p class="text-2xl font-bold mt-1"><span id="water">0.0</span> <span class="text-xs text-zinc-500 font-normal">L</span></p>
+        </div>
+        <button onclick="addWater()" class="mt-4 w-full bg-zinc-800 hover:bg-zinc-700 py-2 rounded-xl text-xs font-semibold">+ 250 ml</button>
+      </div>
+    </div>
+
     <div class="space-y-4">
-      <button onclick="completeQuest()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg">🏆 Daily Quest (+50 XP)</button>
-      <button onclick="logWorkout()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg">🏋️ Log Workout (+35 XP)</button>
-      <button onclick="showExercises()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg">📋 Exercise Library</button>
+      <button onclick="completeQuest()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg flex justify-between items-center">
+        <span>🏆 Daily Quest</span>
+        <span class="text-emerald-400 font-bold">+50 XP</span>
+      </button>
+      
+      <button onclick="logWorkout()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg flex justify-between items-center">
+        <span>🏋️ Log Workout</span>
+        <span class="text-emerald-400 font-bold">+35 XP</span>
+      </button>
+      
+      <button onclick="toggleLibrary()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left text-lg flex justify-between items-center">
+        <span>📋 Exercise Library</span>
+        <span id="library-arrow" class="text-zinc-500 text-sm">Expand ▼</span>
+      </button>
+
+      <div id="exercise-library" class="hidden space-y-4 bg-zinc-900 p-4 rounded-3xl border border-zinc-800">
+        <div class="bg-zinc-950 p-4 rounded-2xl">
+          <h4 class="font-bold text-md text-purple-400 mb-2">1. Classic Push-Ups (3 Sets)</h4>
+          <div class="grid grid-cols-2 gap-2 text-center text-xs">
+            <div class="bg-zinc-900 aspect-video rounded-xl flex items-center justify-center text-zinc-500 border border-zinc-800">
+              🖼️ [Form Image]
+            </div>
+            <div class="bg-zinc-900 aspect-video rounded-xl flex items-center justify-center text-zinc-500 border border-zinc-800">
+              🎥 [Demo Video]
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-zinc-950 p-4 rounded-2xl">
+          <h4 class="font-bold text-md text-purple-400 mb-2">2. Barbell Squats (4 Sets)</h4>
+          <div class="grid grid-cols-2 gap-2 text-center text-xs">
+            <div class="bg-zinc-900 aspect-video rounded-xl flex items-center justify-center text-zinc-500 border border-zinc-800">
+              🖼️ [Form Image]
+            </div>
+            <div class="bg-zinc-900 aspect-video rounded-xl flex items-center justify-center text-zinc-500 border border-zinc-800">
+              🎥 [Demo Video]
+            </div>
+          </div>
+        </div>
+      </div>
+
       <button onclick="generatePlan()" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-3xl text-xl font-bold">✨ Generate Personalized Plan</button>
+      
+      <button onclick="resetProgress()" class="w-full border border-zinc-800 hover:border-red-500/30 hover:bg-red-950/20 text-zinc-600 hover:text-red-400 transition p-4 rounded-3xl text-sm font-semibold tracking-wide mt-6">
+        🔄 Reset Hunter Progress & Stats
+      </button>
     </div>
   </div>
 
@@ -50,8 +110,8 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     
-    // Application state variables
-    let xp = 0, level = 1;
+    // Application state schema
+    let xp = 0, level = 1, calories = 0, water = 0.0;
     const userDbRef = database.ref("users/ProKr");
 
     // 1. Listen for Realtime database updates
@@ -61,34 +121,36 @@
         if (data) {
           xp = data.xp !== undefined ? data.xp : 0;
           level = data.level !== undefined ? data.level : 1;
+          calories = data.calories !== undefined ? data.calories : 0;
+          water = data.water !== undefined ? data.water : 0.0;
           updateUI();
         } else {
-          // Fallback if the user profile doesn't exist yet in your DB root
-          xp = 245;
-          level = 1;
+          // Defaults if document doesn't exist yet
+          xp = 245; level = 1; calories = 1800; water = 1.5;
           updateUI();
-          saveUserData(xp, level);
+          saveUserData();
         }
       }, (error) => {
-        console.error("Database read failed: ", error);
-        // Clean local defaults fallback if rule permissions block it initially
-        xp = 245;
-        level = 1;
-        updateUI();
+        console.error("Database read failure: ", error);
+        xp = 245; level = 1; updateUI();
       });
     }
 
-    // 2. Save tracking state back to Firebase
-    function saveUserData(currentXp, currentLevel) {
+    // 2. Commit State Changes to Firebase
+    function saveUserData() {
       userDbRef.set({
-        xp: currentXp,
-        level: currentLevel
-      }).catch((error) => console.error("Database save failed: ", error));
+        xp: xp,
+        level: level,
+        calories: calories,
+        water: parseFloat(water.toFixed(2))
+      }).catch((error) => console.error("Database sync issue: ", error));
     }
 
     function updateUI() {
       document.getElementById('xp').textContent = xp + " XP";
       document.getElementById('level').textContent = "Lv. " + level;
+      document.getElementById('calories').textContent = calories;
+      document.getElementById('water').textContent = water.toFixed(2);
     }
 
     function addXp(amount) {
@@ -99,7 +161,7 @@
         alert("🎉 LEVEL UP!"); 
       }
       updateUI();
-      saveUserData(xp, level);
+      saveUserData();
     }
 
     function completeQuest() {
@@ -112,15 +174,50 @@
       alert("Workout Logged!");
     }
 
-    function showExercises() {
-      alert("Exercise Library:\n\n1. Push-ups - 3 sets\n2. Squats - 4 sets\n3. Plank - 45 seconds\n\nLog them using the buttons above.");
+    // Health Mechanics
+    function addCalories() {
+      calories += 250;
+      updateUI();
+      saveUserData();
+    }
+
+    function addWater() {
+      water += 0.25;
+      updateUI();
+      saveUserData();
+    }
+
+    // Toggle exercise drawer
+    function toggleLibrary() {
+      const library = document.getElementById('exercise-library');
+      const arrow = document.getElementById('library-arrow');
+      if(library.classList.contains('hidden')) {
+        library.classList.remove('hidden');
+        arrow.textContent = "Collapse ▲";
+      } else {
+        library.classList.add('hidden');
+        arrow.textContent = "Expand ▼";
+      }
     }
 
     function generatePlan() {
       alert("🧠 Personalized Plan Ready!\n\nPush Day Focus");
     }
 
-    // Spin up the sync link
+    // 3. Complete Reset Logic
+    function resetProgress() {
+      if (confirm("⚠️ Clear profile? This will reset Level, XP, Calories, and Water metrics down to default base attributes.")) {
+        xp = 0;
+        level = 1;
+        calories = 0;
+        water = 0.0;
+        updateUI();
+        saveUserData();
+        alert("🔄 Profile attribute arrays initialized.");
+      }
+    }
+
+    // Load active stream
     initDatabaseListener();
   </script>
 </body>
