@@ -24,30 +24,21 @@
     </div>
 
     <div class="space-y-4 mb-8">
-      <button onclick="completeQuest()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">
-        🏆 Daily Quest (+50 XP)
-      </button>
-
-      <button onclick="logWorkout()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">
-        🏋️ Log Workout (+35 XP)
-      </button>
-
-      <button onclick="showExercises()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">
-        📋 Exercise List
-      </button>
-
-      <button onclick="generatePlan()" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-3xl text-xl font-bold">
-        ✨ Generate Plan
-      </button>
+      <button onclick="completeQuest()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">🏆 Daily Quest (+50 XP)</button>
+      <button onclick="logWorkout()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">🏋️ Log Workout (+35 XP)</button>
+      <button onclick="showExercises()" class="w-full bg-zinc-800 p-6 rounded-3xl text-left">📋 Exercise Library</button>
+      <button onclick="generatePlan()" class="w-full bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-3xl text-xl font-bold">✨ Generate Plan</button>
     </div>
+  </div>
 
-    <!-- Exercise Modal -->
-    <div id="exerciseModal" class="hidden fixed inset-0 bg-black/80 flex items-end">
-      <div class="bg-zinc-900 w-full rounded-t-3xl p-6 max-h-[80vh] overflow-auto">
-        <h2 class="text-2xl font-bold mb-6">Exercise Vault</h2>
-        <div class="space-y-6" id="exerciseList"></div>
-        <button onclick="hideExercises()" class="mt-8 w-full bg-red-600 py-4 rounded-2xl">Close</button>
-      </div>
+  <!-- Exercise Modal -->
+  <div id="exerciseModal" class="hidden fixed inset-0 bg-black/90 flex items-end z-50">
+    <div class="bg-zinc-900 w-full rounded-t-3xl p-6 max-h-[85vh] overflow-auto">
+      <h2 class="text-2xl font-bold mb-6 flex justify-between">
+        Exercise Library 
+        <button onclick="hideExercises()" class="text-red-400">✕</button>
+      </h2>
+      <div id="exerciseList" class="space-y-8"></div>
     </div>
   </div>
 
@@ -55,11 +46,10 @@
     let xp = 245, level = 1, name = "ProKr";
 
     const exercises = [
-      {name: "Push-ups", desc: "3 sets of 15 reps • Chest & Arms"},
-      {name: "Squats", desc: "4 sets of 12 reps • Legs"},
-      {name: "Plank", desc: "3 rounds of 45 seconds • Core"},
-      {name: "Lunges", desc: "3 sets of 10 each leg • Legs & Balance"},
-      {name: "Pull-ups (or assisted)", desc: "3 sets • Back"},
+      {name: "Push-ups", desc: "3 sets of 15", video: "https://www.youtube.com/embed/iodx9Z4z9bU", img: "https://picsum.photos/id/1015/300/200"},
+      {name: "Squats", desc: "4 sets of 12", video: "https://www.youtube.com/embed/yaP4p4z0z0I", img: "https://picsum.photos/id/1016/300/200"},
+      {name: "Plank", desc: "3 x 45 seconds", video: "", img: "https://picsum.photos/id/102/300/200"},
+      {name: "Lunges", desc: "10 each leg", video: "", img: "https://picsum.photos/id/1033/300/200"},
     ];
 
     function update() {
@@ -68,27 +58,24 @@
       document.getElementById('name').textContent = name;
     }
 
-    function completeQuest() {
-      xp += 50;
-      if (xp >= level * 120) { level++; xp = 0; alert("🎉 LEVEL UP!"); }
-      update();
-      alert("Quest Complete!");
-    }
+    function completeQuest() { xp += 50; checkLevel(); update(); alert("Quest Complete!"); }
+    function logWorkout() { xp += 35; checkLevel(); update(); alert("Workout Logged!"); }
 
-    function logWorkout() {
-      xp += 35;
+    function checkLevel() {
       if (xp >= level * 120) { level++; xp = 0; alert("🎉 LEVEL UP!"); }
-      update();
-      alert("Workout Logged!");
     }
 
     function showExercises() {
       const container = document.getElementById('exerciseList');
       container.innerHTML = exercises.map(ex => `
-        <div class="bg-zinc-800 p-5 rounded-2xl">
-          <p class="font-bold text-lg">${ex.name}</p>
-          <p class="text-zinc-400">${ex.desc}</p>
-          <button onclick="logSingleExercise('${ex.name}')" class="mt-4 text-sm bg-emerald-600 px-6 py-2 rounded-xl">Log this exercise</button>
+        <div class="bg-zinc-800 rounded-3xl overflow-hidden">
+          <img src="${ex.img}" class="w-full h-40 object-cover">
+          <div class="p-5">
+            <p class="font-bold text-xl">${ex.name}</p>
+            <p class="text-zinc-400">${ex.desc}</p>
+            \( {ex.video ? `<iframe class="w-full mt-4 rounded-2xl aspect-video" src=" \){ex.video}" frameborder="0" allowfullscreen></iframe>` : ''}
+            <button onclick="logSingle('${ex.name}')" class="mt-4 w-full bg-emerald-600 py-3 rounded-2xl">Log Exercise (+25 XP)</button>
+          </div>
         </div>
       `).join('');
       document.getElementById('exerciseModal').classList.remove('hidden');
@@ -98,15 +85,15 @@
       document.getElementById('exerciseModal').classList.add('hidden');
     }
 
-    function logSingleExercise(name) {
+    function logSingle(name) {
       xp += 25;
-      if (xp >= level * 120) { level++; xp = 0; alert("🎉 LEVEL UP!"); }
+      checkLevel();
       update();
       alert(`Logged ${name}! +25 XP`);
     }
 
     function generatePlan() {
-      alert("🧠 Personalized Plan:\n\nPush Day\n- Push-ups\n- Shoulder Press\n- Tricep Dips");
+      alert("🧠 Today's Plan:\nPush Day Focus");
     }
 
     update();
