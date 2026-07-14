@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arise - Level Up in Real Life</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { background: linear-gradient(135deg, #1a1a2e 0%, #0f172a 100%); color: white; font-family: system-ui; }
+    .card { background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="min-h-screen pb-24">
+  <div class="max-w-md mx-auto p-4">
+
+    <header class="flex justify-between items-center mb-8 pt-6">
+      <div class="flex items-center gap-3">
+        <span class="text-5xl">⚔️</span>
+        <h1 class="text-5xl font-black tracking-tighter">ARISE</h1>
+      </div>
+      <div>
+        <div id="level" class="text-emerald-400 text-3xl font-bold">Lv. 3</div>
+        <div id="xp" class="text-sm text-right">245 XP</div>
+      </div>
+    </header>
+
+    <div class="card rounded-3xl p-6 mb-8">
+      <p class="text-zinc-400">Hunter Name</p>
+      <p id="name" class="text-2xl font-bold">Shadow Hunter</p>
+      <p class="text-orange-400 text-lg">🔥 <span id="streak">7</span> day streak</p>
+    </div>
+
+    <div class="space-y-4">
+      <button onclick="completeQuest()" class="w-full card p-6 rounded-3xl flex gap-5 items-center">
+        <span class="text-5xl">🏆</span>
+        <div class="flex-1">
+          <p class="text-xl font-semibold">Daily Quest</p>
+          <p class="text-emerald-400">Complete today's workout (+50 XP)</p>
+        </div>
+      </button>
+
+      <button onclick="logWorkout()" class="w-full card p-6 rounded-3xl flex gap-5 items-center">
+        <span class="text-5xl">🏋️</span>
+        <div class="flex-1">
+          <p class="text-xl font-semibold">Log Workout</p>
+          <p class="text-purple-400">+35 XP</p>
+        </div>
+      </button>
+
+      <button onclick="generatePlan()" class="w-full bg-gradient-to-r from-purple-600 to-cyan-500 py-7 rounded-3xl text-xl font-bold">
+        ✨ Generate Personalized Plan
+      </button>
+    </div>
+
+    <div class="mt-12 flex gap-3">
+      <button onclick="changeName()" class="flex-1 py-4 bg-zinc-800 rounded-2xl">Change Name</button>
+      <button onclick="resetProgress()" class="flex-1 py-4 bg-red-900/30 rounded-2xl text-red-400">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let xp = 245, level = 3, streak = 7, name = "Shadow Hunter";
+
+    function load() {
+      const data = JSON.parse(localStorage.getItem('ariseData') || '{}');
+      xp = data.xp || 245; level = data.level || 3; streak = data.streak || 7; name = data.name || "Shadow Hunter";
+      update();
+    }
+
+    function save() { localStorage.setItem('ariseData', JSON.stringify({xp, level, streak, name})); }
+
+    function update() {
+      document.getElementById('xp').innerHTML = `${xp} XP`;
+      document.getElementById('level').innerHTML = `Lv. ${level}`;
+      document.getElementById('streak').innerHTML = streak;
+      document.getElementById('name').innerHTML = name;
+    }
+
+    function completeQuest() { xp += 50; streak++; checkLevelUp(); update(); save(); alert("✅ Quest Complete!"); }
+    function logWorkout() { xp += 35; checkLevelUp(); update(); save(); alert("🏋️ Workout Logged!"); }
+
+    function checkLevelUp() {
+      if (xp >= level * 120) {
+        level++;
+        xp = xp % (level * 120);
+        alert(`🎉 LEVEL UP! Now Level ${level}`);
+      }
+    }
+
+    function generatePlan() {
+      alert("🧠 Personalized Plan Ready!\n\nToday's Focus: Push Day\n- Push-ups 4x15\n- Shoulder Press 3x12\n- Triceps 3x15");
+    }
+
+    function changeName() {
+      const n = prompt("Enter new Hunter name:", name);
+      if (n) { name = n; update(); save(); }
+    }
+
+    function resetProgress() {
+      if (confirm("Reset everything?")) {
+        xp=0; level=1; streak=0; save(); load();
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
