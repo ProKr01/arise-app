@@ -3,12 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProFit++ Ultra Platform</title>
+  <title>ProFit++ Ultra Engine</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+  <style>
+    /* AAA Shimmer, Level Up Flash & Neon Aura Effects */
+    @keyframes neonGlow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.4)); }
+      50% { filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.8)); }
+    }
+    @keyframes lvlFlash {
+      0% { background-color: rgba(16, 185, 129, 0); }
+      50% { background-color: rgba(16, 185, 129, 0.35); }
+      100% { background-color: rgba(16, 185, 129, 0); }
+    }
+    .pulse-neon { animation: neonGlow 2s infinite ease-in-out; }
+    .level-up-flash { animation: lvlFlash 0.5s cubic-bezier(0.1, 0.8, 0.3, 1); }
+    
+    /* Smooth scaling overrides */
+    .scale-up-trigger {
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
 </head>
-<body class="bg-zinc-950 text-white min-h-screen lg:pb-0 pb-24">
+<body class="bg-zinc-950 text-white min-h-screen lg:pb-0 pb-24 transition-colors duration-300">
 
   <div class="max-w-7xl mx-auto min-h-screen lg:grid lg:grid-cols-12 lg:gap-8 lg:p-6">
     
@@ -16,8 +37,8 @@
       <header class="flex justify-between items-center lg:mb-2">
         <h1 class="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">ProFit++ ⚔️</h1>
         <div class="text-right lg:hidden">
-          <div class="text-emerald-400 text-2xl font-bold" id="level-mob">Lv. 0</div>
-          <div id="xp-mob" class="text-zinc-400 text-sm font-medium">0 / 120 XP</div>
+          <div class="text-emerald-400 text-2xl font-bold transition-all" id="level-mob">Lv. 0</div>
+          <div id="xp-mob" class="text-zinc-400 text-sm font-medium font-mono">0 / 120 XP</div>
         </div>
       </header>
 
@@ -25,15 +46,15 @@
         <div class="hidden lg:flex justify-between items-start">
           <span class="text-xs bg-zinc-950 px-3 py-1 rounded-full text-zinc-400 border border-zinc-800 font-mono">STATUS PANEL</span>
           <div class="text-right">
-            <div class="text-emerald-400 text-3xl font-black" id="level-desk">Lv. 0</div>
+            <div class="text-emerald-400 text-3xl font-black scale-up-trigger" id="level-desk">Lv. 0</div>
             <div id="xp-desk" class="text-zinc-500 text-xs font-mono mt-1">0 / 120 XP</div>
           </div>
         </div>
 
         <div class="relative w-full aspect-square bg-zinc-950 rounded-2xl border border-zinc-800 overflow-hidden group">
           <img id="avatar-frame" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-          <div class="absolute bottom-2 right-2 bg-zinc-900/90 border border-zinc-800 px-2 py-1 rounded-lg text-[10px] text-zinc-400 font-mono">
-            Matrix Feed
+          <div class="absolute bottom-2 right-2 bg-zinc-900/90 border border-zinc-800 px-2 py-1 rounded-lg text-[10px] text-zinc-400 font-mono tracking-wider">
+            SYSTEM FEED
           </div>
         </div>
 
@@ -41,25 +62,25 @@
           <label class="block text-[10px] text-zinc-500 uppercase tracking-widest font-black mb-1">Select Identity Theme</label>
           <select id="avatar-selector" onchange="changeAvatarSkin(this.value)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-2.5 text-xs focus:outline-none focus:border-cyan-400 font-bold text-zinc-300">
             <option value="real">Real Gym Motivation (Default)</option>
-            <option value="shadow">Anime Concept (Shadow Monarch)</option>
-            <option value="cyborg">Cyberpunk Operative</option>
+            <option value="shadow">Anime Concept (Lv. 3 Lock)</option>
+            <option value="cyborg">Cyberpunk Operative (Lv. 5 Lock)</option>
           </select>
         </div>
 
         <div>
-          <p class="text-zinc-500 uppercase tracking-wider text-xs font-bold">Hunter Rank</p>
+          <p class="text-zinc-500 uppercase tracking-wider text-xs font-bold">Hunter Rank Identifier</p>
           <div class="flex items-center gap-2 mt-1">
             <input id="hunter-name-input" type="text" value="ProKr" onchange="updateHunterName(this.value)" class="bg-transparent text-3xl font-black focus:outline-none focus:border-b-2 focus:border-cyan-400 w-full rounded py-0.5">
             <span class="text-xs text-zinc-500">✏️</span>
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-2 pt-2">
+        <div class="flex flex-wrap gap-2 pt-1">
           <span class="text-orange-400 text-xs font-semibold bg-orange-950/40 px-3 py-1.5 rounded-full border border-orange-900/30 flex items-center gap-1">
             🔥 <span id="streak-display">0</span> Day Streak
             <button id="streak-btn" onclick="incrementStreakOnceADay()" class="text-[10px] ml-1 bg-orange-500/20 px-2 py-0.5 rounded-md hover:bg-orange-500/40 text-orange-300 font-black transition">Claim</button>
           </span>
-          <span id="class-badge" class="text-cyan-400 text-xs font-semibold bg-cyan-950/40 px-3 py-1.5 rounded-full border border-cyan-900/30">
+          <span id="class-badge" class="text-cyan-400 text-xs font-semibold bg-cyan-950/40 px-3 py-1.5 rounded-full border border-cyan-900/30 transition-all duration-300">
             Class: Evaluating...
           </span>
         </div>
@@ -70,14 +91,14 @@
       
       <div id="page-dashboard" class="tab-page space-y-6">
         <div class="grid grid-cols-2 gap-4">
-          <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between space-y-4">
+          <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between space-y-4 shadow-md">
             <div>
               <p class="text-zinc-400 text-xs font-bold uppercase tracking-wider">🔥 Energy Logged</p>
-              <p class="text-2xl font-black mt-2 text-orange-400"><span id="calories">0</span> <span class="text-xs text-zinc-500 font-normal">/ <span id="target-calories">2000</span> kcal</span></p>
+              <p class="text-2xl font-black mt-2 text-orange-400 font-mono"><span id="calories">0</span> <span class="text-xs text-zinc-500 font-normal font-sans">/ <span id="target-calories">2000</span> kcal</span></p>
             </div>
             <div class="space-y-2">
               <div class="flex gap-1">
-                <input type="number" id="custom-cal-input" placeholder="+ Add kcal" class="w-full bg-zinc-950 text-xs border border-zinc-800 rounded-lg p-2 text-center focus:outline-none focus:border-orange-500 font-bold">
+                <input type="number" id="custom-cal-input" placeholder="+ Add kcal" class="w-full bg-zinc-950 text-xs border border-zinc-800 rounded-lg p-2 text-center focus:outline-none focus:border-orange-500 font-bold font-mono">
                 <button onclick="logCustomCalories()" class="bg-orange-500 hover:bg-orange-600 text-white font-black text-xs px-3 rounded-lg">+</button>
               </div>
               <div class="grid grid-cols-2 gap-1">
@@ -87,14 +108,14 @@
             </div>
           </div>
 
-          <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between space-y-4">
+          <div class="bg-zinc-900 rounded-3xl p-5 border border-zinc-800 flex flex-col justify-between space-y-4 shadow-md">
             <div>
               <p class="text-zinc-400 text-xs font-bold uppercase tracking-wider">💧 Elixir Infused</p>
-              <p class="text-2xl font-black mt-2 text-cyan-400"><span id="water">0</span> <span class="text-xs text-zinc-500 font-normal">/ <span id="target-water">3000</span> ml</span></p>
+              <p class="text-2xl font-black mt-2 text-cyan-400 font-mono"><span id="water">0</span> <span class="text-xs text-zinc-500 font-normal font-sans">/ <span id="target-water">3000</span> ml</span></p>
             </div>
             <div class="space-y-2">
               <div class="flex gap-1">
-                <input type="number" id="custom-water-input" placeholder="+ Add ml" class="w-full bg-zinc-950 text-xs border border-zinc-800 rounded-lg p-2 text-center focus:outline-none focus:border-cyan-500 font-bold">
+                <input type="number" id="custom-water-input" placeholder="+ Add ml" class="w-full bg-zinc-950 text-xs border border-zinc-800 rounded-lg p-2 text-center focus:outline-none focus:border-cyan-500 font-bold font-mono">
                 <button onclick="logCustomWater()" class="bg-cyan-500 hover:bg-cyan-600 text-white font-black text-xs px-3 rounded-lg">+</button>
               </div>
               <button onclick="addWater(250)" class="w-full bg-zinc-800 hover:bg-zinc-700 py-1.5 rounded-lg text-[10px] font-bold">
@@ -106,26 +127,27 @@
 
         <div class="space-y-4">
           <h3 class="text-xs font-bold text-zinc-500 tracking-wider uppercase pl-1">Active Instanced Quests</h3>
-          <button onclick="completeQuest()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group">
+          
+          <button onclick="completeQuest()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group relative overflow-hidden">
             <div class="flex items-center gap-3">
-              <span class="text-2xl group-hover:scale-110 transition">🏆</span>
+              <span class="text-2xl group-hover:scale-110 transition duration-300">🏆</span>
               <div>
-                <p class="font-bold text-base">Daily Gate Quest</p>
-                <p class="text-xs text-zinc-500">Complete standard physical baseline parameters</p>
+                <p class="font-bold text-base text-zinc-100">Daily Gate Quest</p>
+                <p class="text-xs text-zinc-500">Complete standard physical tracking parameters</p>
               </div>
             </div>
-            <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl">+50 XP</span>
+            <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl tracking-wide">+50 XP</span>
           </button>
           
-          <button onclick="logWorkout()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group">
+          <button onclick="logWorkout()" class="w-full bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 p-5 rounded-3xl text-left text-lg flex justify-between items-center transition group relative overflow-hidden">
             <div class="flex items-center gap-3">
-              <span class="text-2xl group-hover:scale-110 transition">🏋️</span>
+              <span class="text-2xl group-hover:scale-110 transition duration-300">🏋️</span>
               <div>
-                <p class="font-bold text-base">Clear Instance Dungeon</p>
-                <p class="text-xs text-zinc-500">Log an intensive muscle stress set group</p>
+                <p class="font-bold text-base text-zinc-100">Clear Instance Dungeon</p>
+                <p class="text-xs text-zinc-500">Commit structural muscle stress loading routine</p>
               </div>
             </div>
-            <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl">+35 XP</span>
+            <span class="text-emerald-400 font-black text-sm bg-emerald-950/50 border border-emerald-900 px-3 py-1 rounded-xl tracking-wide">+35 XP</span>
           </button>
         </div>
       </div>
@@ -135,9 +157,9 @@
         <h2 class="text-2xl font-black tracking-wide text-cyan-400">VISUAL EXERCISE VAULT</h2>
         
         <div class="bg-zinc-900 rounded-3xl border border-purple-900/30 p-5 space-y-2">
-          <h3 class="font-black text-xs text-purple-400 uppercase tracking-widest flex items-center gap-2">🏋️ Structural Routine Mechanics Split</h3>
+          <h3 class="font-black text-xs text-purple-400 uppercase tracking-widest flex items-center gap-2">🏋️ Structural Mechanical Output Split</h3>
           <div id="dynamic-routine-box" class="text-sm space-y-2 text-zinc-300 font-mono bg-zinc-950 p-4 rounded-xl border border-zinc-800">
-            Click "Generate Interactive Blueprint" on the Blueprint tab to load metrics.
+            Trigger "Generate Interactive Blueprint" inside the engine deck to calculate your schedule.
           </div>
         </div>
 
@@ -148,57 +170,57 @@
       <div id="page-blueprint" class="tab-page space-y-6 hidden">
         <div class="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 rounded-3xl shadow-lg">
           <h2 class="text-2xl font-black text-white">HUNTER MATRIX ENGINE</h2>
-          <p class="text-xs text-cyan-100 mt-1">Cross-references tracking targets to render matching training schedules and nutritional metrics.</p>
+          <p class="text-xs text-cyan-100 mt-1">Cross-references localized metrics to render macro partitions and visual routine mechanics.</p>
         </div>
 
-        <div class="bg-zinc-900 p-5 rounded-3xl border border-zinc-800 space-y-4">
-          <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">📊 Metric Inputs</h3>
+        <div class="bg-zinc-900 p-5 rounded-3xl border border-zinc-800 space-y-4 shadow-xl">
+          <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">📊 Metric Variables Configurator</h3>
           
           <div class="grid grid-cols-3 gap-4">
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Current Mass (kg)</label>
-              <input type="number" id="input-weight" value="70" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold">
+              <input type="number" id="input-weight" value="70" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold font-mono">
             </div>
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Target Mass (kg)</label>
-              <input type="number" id="input-target-weight" value="65" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold text-emerald-400">
+              <input type="number" id="input-target-weight" value="65" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold text-emerald-400 font-mono">
             </div>
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Height (cm)</label>
-              <input type="number" id="input-height" value="175" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold">
+              <input type="number" id="input-height" value="175" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold font-mono">
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs text-zinc-400 font-bold mb-1">Current Lifestyle</label>
+              <label class="block text-xs text-zinc-400 font-bold mb-1">Current Output State</label>
               <select id="input-lifestyle" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="sedentary">Sedentary (Low Output)</option>
                 <option value="moderate" selected>Active (Gym 3x-4x)</option>
-                <option value="elite">Monarch (Daily Grinding)</option>
+                <option value="elite">Monarch (Extreme Load)</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs text-zinc-400 font-bold mb-1">Desired Lifestyle</label>
+              <label class="block text-xs text-zinc-400 font-bold mb-1">Desired Horizon Class</label>
               <select id="target-lifestyle" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="sedentary">Maintenance Routine</option>
-                <option value="moderate">Lean Dynamic Split</option>
-                <option value="elite" selected>Extreme Shred Load</option>
+                <option value="moderate">Lean Builder Split</option>
+                <option value="elite" selected>Extreme Shred Burn</option>
               </select>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4 border-t border-zinc-800/50 pt-3">
             <div>
-              <label class="block text-xs text-zinc-400 font-bold mb-1">Horizon Range Target</label>
+              <label class="block text-xs text-zinc-400 font-bold mb-1">Horizon Projections</label>
               <select id="input-timeframe" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
-                <option value="4_weeks">Short-Term (4 Weeks)</option>
-                <option value="6_months" selected>Mid-Term (6 Months)</option>
-                <option value="1_year">Long-Term (1 Year)</option>
+                <option value="4_weeks">Short Range (4 Weeks)</option>
+                <option value="6_months" selected>Mid Range (6 Months)</option>
+                <option value="1_year">Long Range (1 Year)</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs text-zinc-400 font-bold mb-1">Geographical Domain</label>
+              <label class="block text-xs text-zinc-400 font-bold mb-1">Geographic Domain Palette</label>
               <select id="input-region" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="western" selected>Western Macro Deck</option>
                 <option value="asian">Asian Fusion Deck</option>
@@ -212,23 +234,23 @@
           </button>
 
           <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-xs text-center font-mono">
-            Calculated Structural BMI Value: <span id="bmi-val" class="text-cyan-400 font-bold">22.9</span>
+            Structural BMI Evaluation Check: <span id="bmi-val" class="text-cyan-400 font-bold">22.9</span>
           </div>
         </div>
 
-        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-4">
-          <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest">🍎 Dynamic Target Nutritional Partitioning</h3>
+        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-4 shadow-md">
+          <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest">🍎 Targeted Macro-Partition Output Mapping</h3>
           <div class="grid grid-cols-3 gap-2 text-center text-xs">
-            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800"><div class="text-zinc-500 font-semibold mb-0.5">PROTEIN</div><div id="macro-p" class="font-black text-emerald-400 text-sm">--g</div></div>
-            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800"><div class="text-zinc-500 font-semibold mb-0.5">CARBS</div><div id="macro-c" class="font-black text-amber-400 text-sm">--g</div></div>
-            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800"><div class="text-zinc-500 font-semibold mb-0.5">FATS</div><div id="macro-f" class="font-black text-rose-400 text-sm">--g</div></div>
+            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800"><div class="text-zinc-500 font-semibold mb-0.5">PROTEIN</div><div id="macro-p" class="font-black text-emerald-400 text-sm font-mono">--g</div></div>
+            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800"><div class="text-zinc-500 font-semibold mb-0.5">CARBS</div><div id="macro-c" class="font-black text-amber-400 text-sm font-mono">--g</div></div>
+            <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800"><div class="text-zinc-500 font-semibold mb-0.5">FATS</div><div id="macro-f" class="font-black text-rose-400 text-sm font-mono">--g</div></div>
           </div>
         </div>
 
-        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-4">
-          <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest">🥗 Tailored Domain Meals Vault</h3>
+        <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-4 shadow-md">
+          <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest">🥗 Tailored Regional Domestic Food Records</h3>
           <div id="recipe-vault-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <p class="text-xs text-zinc-500 font-mono col-span-2 text-center py-2">Click "Generate Interactive Blueprint" above to load the macro deck.</p>
+            <p class="text-xs text-zinc-500 font-mono col-span-2 text-center py-2">Execute matrix parameters to load tailored recipe nodes.</p>
           </div>
         </div>
 
@@ -255,7 +277,7 @@
   </nav>
 
   <script>
-    // System Configurations Live Database Config
+    // Firebase Node Matrix Core Setup Configuration Link Block
     const firebaseConfig = {
       apiKey: "AIzaSyAWSur-nZd-X4qZrk2ijd8sne7c5EFuOyM",
       authDomain: "prokr-896fc.firebaseapp.com",
@@ -269,7 +291,7 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
     
-    // Base State tracking variables (Fixing Default Streak Baseline floor to explicit 0)
+    // Core memory tracking states variables (Initializing Explicit Default Streak baseline to zero)
     let xp = 0, level = 0, calories = 0, water = 0, hunterName = "ProKr", streak = 0;
     let weight = 70, targetWeight = 65, height = 175, lifestyle = "moderate", targetLifestyle = "elite";
     let timeframe = "6_months", region = "western", avatarSkin = "real";
@@ -277,24 +299,91 @@
     
     const userDbRef = database.ref("users/ProKr");
 
-    // Dynamic Central Data Repositories for Simple Expansion Architecture
+    // AAA Synthesized Web Audio Layer Module API 
+    const SoundEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+      },
+      playTick() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const volumetricGain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(580, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1150, this.ctx.currentTime + 0.07);
+        volumetricGain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        volumetricGain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.07);
+        osc.connect(volumetricGain);
+        volumetricGain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.07);
+      },
+      playFanfare() {
+        this.init();
+        const chordNotes = [261.63, 329.63, 392.00, 523.25]; // Synthesized Major Tonal Ascent Arpeggio Ring
+        chordNotes.forEach((f, index) => {
+          const osc = this.ctx.createOscillator();
+          const gainNode = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(f, this.ctx.currentTime + index * 0.09);
+          gainNode.gain.setValueAtTime(0.12, this.ctx.currentTime + index * 0.09);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + index * 0.09 + 0.28);
+          osc.connect(gainNode);
+          gainNode.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + index * 0.09);
+          osc.stop(this.ctx.currentTime + index * 0.09 + 0.28);
+        });
+      }
+    };
+
+    // Hardware Haptic Interface Core API Trigger Wrappers 
+    function runHapticPop(setting = 'light') {
+      if (!navigator.vibrate) return;
+      if (setting === 'light') navigator.vibrate(15);
+      if (setting === 'heavy') navigator.vibrate([45, 25, 45]);
+    }
+
+    // Dynamic Frame Counter Fluid Easing Animation Loop Engine
+    function dispatchOdometerTicker(targetElementId, pointAlpha, pointOmega, durationMs = 500) {
+      const node = document.getElementById(targetElementId);
+      if (!node) return;
+      let frameTimeStart = null;
+      const executionStep = (currentTimestamp) => {
+        if (!frameTimeStart) frameTimeStart = currentTimestamp;
+        const temporalProgress = Math.min((currentTimestamp - frameTimeStart) / durationMs, 1);
+        const quadraticEaseOut = temporalProgress * (2 - temporalProgress);
+        const dynamicInterimValue = Math.floor(quadraticEaseOut * (pointOmega - pointAlpha) + pointAlpha);
+        node.textContent = dynamicInterimValue;
+        if (temporalProgress < 1) {
+          window.requestAnimationFrame(executionStep);
+        } else {
+          node.textContent = pointOmega;
+        }
+      };
+      window.requestAnimationFrame(executionStep);
+    }
+
+    // Advanced Matrix Memory Object Storage Units
     const AVATAR_SKIN_VAULT = {
       real: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500",
-      shadow: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500", // High intensity neon anime theme
-      cyborg: "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=500"  // Deep technical mechanical theme
+      shadow: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500",
+      cyborg: "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=500"
     };
 
     const REGIONAL_DIET_VAULT = {
       western: [
-        { name: "Flank Steak Plate", desc: "Lean flank beef cut with herbed sweet potato slices and asparagus.", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500" },
-        { name: "Anabolic Shred Salad", desc: "Shredded white turkey breast meat, light spinach bed, almond flakes.", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500" }
+        { name: "Flank Steak Cut Plate", desc: "Lean flank steak strips layout paired alongside sweet potato wedges & garden asparagus spears.", img: "https://images.unsplash.com/photo-1544025162-d76694265947?w=500" },
+        { name: "Anabolic Greens Salad", desc: "Brined premium white turkey tenders laid over spinach leaf bases and almond flakes.", img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500" }
       ],
       asian: [
-        { name: "Teriyaki Salmon Rice", desc: "Glazed salmon fillet combined with steamed dark jasmine grains.", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500" },
-        { name: "Wok-Fired Beef Tofu", desc: "High protein mass matrix featuring lean minced meat variations.", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500" }
+        { name: "Ginger Teriyaki Salmon Rice", desc: "High-omega salmon steak glazing served alongside jasmine rice layers and steamed baby bok choy.", img: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500" },
+        { name: "Wok-Fired Beef Tofu Blend", desc: "Lean skillet minced beef tossed with firm diced bean curd clusters and dynamic szechuan pepper.", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500" }
       ],
       mediterranean: [
-        { name: "Garlic Lemon Chicken Salad", desc: "Baked clean chicken tenders with real sliced olives and cucumber.", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500" }
+        { name: "Grecian Chicken Herb Tenders", desc: "Baked clean lemon breast cuts paired with authentic dark kalamata olives and sliced cucumbers.", img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500" }
       ]
     };
 
@@ -307,7 +396,7 @@
           calories = Math.round(data.calories || 0);
           water = Math.round(data.water || 0);
           hunterName = data.hunterName || "ProKr";
-          streak = Math.round(data.streak !== undefined ? data.streak : 0); // Normalized down to baseline zero
+          streak = Math.round(data.streak !== undefined ? data.streak : 0);
           weight = Number(data.weight || 70);
           targetWeight = Number(data.targetWeight || 65);
           height = Number(data.height || 175);
@@ -335,13 +424,14 @@
     }
 
     function updateUIValues() {
-      const xpText = xp + " / " + ((level + 1) * 120) + " XP";
-      const lvlText = "Lv. " + level;
+      const boundaryTargetXP = (level + 1) * 120;
+      const formattedXpText = `${xp} / ${boundaryTargetXP} XP`;
+      const formattedLvlText = "Lv. " + level;
       
-      document.getElementById('xp-mob').textContent = xpText;
-      document.getElementById('level-mob').textContent = lvlText;
-      document.getElementById('xp-desk').textContent = xpText;
-      document.getElementById('level-desk').textContent = lvlText;
+      document.getElementById('xp-mob').textContent = formattedXpText;
+      document.getElementById('level-mob').textContent = formattedLvlText;
+      document.getElementById('xp-desk').textContent = formattedXpText;
+      document.getElementById('level-desk').textContent = formattedLvlText;
       
       document.getElementById('calories').textContent = calories;
       document.getElementById('water').textContent = water;
@@ -357,22 +447,44 @@
       document.getElementById('input-region').value = region;
       
       document.getElementById('avatar-selector').value = avatarSkin;
-      document.getElementById('avatar-frame').src = AVATAR_SKIN_VAULT[avatarSkin] || AVATAR_SKIN_VAULT['real'];
-
-      const todayString = new Date().toDateString();
-      const btn = document.getElementById('streak-btn');
-      if (lastStreakDate === todayString) {
-        btn.textContent = "Locked"; btn.disabled = true;
-        btn.className = "text-[10px] ml-1 bg-zinc-800 px-2 py-0.5 rounded-md text-zinc-500 cursor-not-allowed";
+      
+      const targetImgFrame = document.getElementById('avatar-frame');
+      targetImgFrame.src = AVATAR_SKIN_VAULT[avatarSkin] || AVATAR_SKIN_VAULT['real'];
+      if(avatarSkin !== 'real') {
+        targetImgFrame.classList.add('pulse-neon', 'border-2', 'border-cyan-400');
       } else {
-        btn.textContent = "Claim"; btn.disabled = false;
-        btn.className = "text-[10px] ml-1 bg-orange-500/20 px-2 py-0.5 rounded-md hover:bg-orange-500/40 text-orange-300 font-black transition";
+        targetImgFrame.classList.remove('pulse-neon', 'border-2', 'border-cyan-400');
+      }
+
+      const verifiedTodayString = new Date().toDateString();
+      const streakActionBtn = document.getElementById('streak-btn');
+      if (lastStreakDate === verifiedTodayString) {
+        streakActionBtn.textContent = "Locked"; streakActionBtn.disabled = true;
+        streakActionBtn.className = "text-[10px] ml-1 bg-zinc-800 px-2 py-0.5 rounded-md text-zinc-500 cursor-not-allowed font-sans font-normal";
+      } else {
+        streakActionBtn.textContent = "Claim"; streakActionBtn.disabled = false;
+        streakActionBtn.className = "text-[10px] ml-1 bg-orange-500/20 px-2 py-0.5 rounded-md hover:bg-orange-500/40 text-orange-300 font-black transition";
       }
     }
 
-    function changeAvatarSkin(skinValue) {
-      avatarSkin = skinValue;
-      document.getElementById('avatar-frame').src = AVATAR_SKIN_VAULT[skinValue];
+    function changeAvatarSkin(requestedSkinKey) {
+      SoundEngine.playTick();
+      runHapticPop('light');
+      
+      // AAA Automated Condition Level Checks
+      if (requestedSkinKey === 'shadow' && level < 3) {
+        alert("🔒 Character Rank Restricted: Attain Level 3 to deploy Shadow Monarch visuals.");
+        document.getElementById('avatar-selector').value = avatarSkin;
+        return;
+      }
+      if (requestedSkinKey === 'cyborg' && level < 5) {
+        alert("🔒 Modification Locked: Attain Level 5 to implement cybernetic adjustments.");
+        document.getElementById('avatar-selector').value = avatarSkin;
+        return;
+      }
+
+      avatarSkin = requestedSkinKey;
+      updateUIValues();
       saveUserData();
     }
 
@@ -385,53 +497,55 @@
       timeframe = document.getElementById('input-timeframe').value;
       region = document.getElementById('input-region').value;
 
-      const heightInMeters = height / 100;
-      const bmi = weight / (heightInMeters * heightInMeters);
-      document.getElementById('bmi-val').textContent = bmi.toFixed(1);
+      const structuralMeters = height / 100;
+      const structuralBMI = weight / (structuralMeters * structuralMeters);
+      document.getElementById('bmi-val').textContent = structuralBMI.toFixed(1);
 
-      let points = 0;
-      if (bmi >= 18.5 && bmi <= 24.9) points += 50;
-      else if (bmi >= 25 && bmi <= 29.9) points += 30;
-      else points += 10;
+      let formulaMatrixPoints = 0;
+      if (structuralBMI >= 18.5 && structuralBMI <= 24.9) formulaMatrixPoints += 50;
+      else if (structuralBMI >= 25 && structuralBMI <= 29.9) formulaMatrixPoints += 30;
+      else formulaMatrixPoints += 10;
 
-      if (lifestyle === "elite") points += 30;
-      else if (lifestyle === "moderate") points += 15;
+      if (lifestyle === "elite") formulaMatrixPoints += 30;
+      else if (lifestyle === "moderate") formulaMatrixPoints += 15;
 
-      if (targetLifestyle === "elite") points += 20;
-      else if (targetLifestyle === "moderate") points += 10;
+      if (targetLifestyle === "elite") formulaMatrixPoints += 20;
+      else if (targetLifestyle === "moderate") formulaMatrixPoints += 10;
 
-      points += Math.min(streak * 2, 20);
+      formulaMatrixPoints += Math.min(streak * 2, 20);
 
-      let hunterClass = "F"; let badgeColor = "text-zinc-500 bg-zinc-950/40 border-zinc-900/30";
-      if (points >= 110) { hunterClass = "SS+"; badgeColor = "text-yellow-400 bg-yellow-950/40 border-yellow-900/30 animate-pulse"; }
-      else if (points >= 90) { hunterClass = "S"; badgeColor = "text-purple-400 bg-purple-950/40 border-purple-900/30"; }
-      else if (points >= 70) { hunterClass = "A"; badgeColor = "text-red-400 bg-red-950/40 border-red-900/30"; }
-      else if (points >= 50) { hunterClass = "B"; badgeColor = "text-cyan-400 bg-cyan-950/40 border-cyan-900/30"; }
-      else if (points >= 30) { hunterClass = "C"; badgeColor = "text-orange-400 bg-orange-950/40 border-orange-900/30"; }
+      let finalClassRank = "F"; let styleBadgeRules = "text-zinc-500 bg-zinc-950/40 border-zinc-900/30";
+      if (formulaMatrixPoints >= 110) { finalClassRank = "SS+"; styleBadgeRules = "text-yellow-400 bg-yellow-950/40 border-yellow-900/30 animate-pulse font-black"; }
+      else if (formulaMatrixPoints >= 90) { finalClassRank = "S"; styleBadgeRules = "text-purple-400 bg-purple-950/40 border-purple-900/30 font-bold"; }
+      else if (formulaMatrixPoints >= 70) { finalClassRank = "A"; styleBadgeRules = "text-red-400 bg-red-950/40 border-red-900/30"; }
+      else if (formulaMatrixPoints >= 50) { finalClassRank = "B"; styleBadgeRules = "text-cyan-400 bg-cyan-950/40 border-cyan-900/30"; }
+      else if (formulaMatrixPoints >= 30) { finalClassRank = "C"; styleBadgeRules = "text-orange-400 bg-orange-950/40 border-orange-900/30"; }
 
-      const badge = document.getElementById('class-badge');
-      badge.textContent = "Class: " + hunterClass;
-      badge.className = `text-xs font-semibold px-3 py-1 rounded-full border ${badgeColor}`;
+      const badgeNode = document.getElementById('class-badge');
+      badgeNode.textContent = "Class: " + finalClassRank;
+      badgeNode.className = `text-xs font-semibold px-3 py-1.5 rounded-full border ${styleBadgeRules}`;
 
-      let targetCalBase = weight * 30;
-      if (targetLifestyle === "elite") targetCalBase += 600;
-      if (targetLifestyle === "sedentary") targetCalBase -= 400;
+      let baseCaloricCapacity = weight * 30;
+      if (targetLifestyle === "elite") baseCaloricCapacity += 600;
+      if (targetLifestyle === "sedentary") baseCaloricCapacity -= 400;
       
-      if (targetWeight < weight) targetCalBase -= 350;
-      else if (targetWeight > weight) targetCalBase += 350;
+      if (targetWeight < weight) baseCaloricCapacity -= 350;
+      else if (targetWeight > weight) baseCaloricCapacity += 350;
 
-      let targetWaterBase = 2200;
-      if (lifestyle === "elite" || targetLifestyle === "elite") targetWaterBase += 1300;
+      let baseWaterCapacity = 2200;
+      if (lifestyle === "elite" || targetLifestyle === "elite") baseWaterCapacity += 1300;
 
-      document.getElementById('target-calories').textContent = Math.round(targetCalBase);
-      document.getElementById('target-water').textContent = Math.round(targetWaterBase);
+      document.getElementById('target-calories').textContent = Math.round(baseCaloricCapacity);
+      document.getElementById('target-water').textContent = Math.round(baseWaterCapacity);
 
-      const proteinMultiplier = targetLifestyle === "elite" ? 2.2 : (targetLifestyle === "moderate" ? 1.8 : 1.2);
-      document.getElementById('macro-p').textContent = Math.round(weight * proteinMultiplier) + "g";
+      const computedProteinMultiplier = targetLifestyle === "elite" ? 2.2 : (targetLifestyle === "moderate" ? 1.8 : 1.2);
+      document.getElementById('macro-p').textContent = Math.round(weight * computedProteinMultiplier) + "g";
       document.getElementById('macro-c').textContent = Math.round(weight * (targetLifestyle === "elite" ? 2.5 : 3.5)) + "g";
       document.getElementById('macro-f').textContent = Math.round(weight * 0.8) + "g";
 
       if (shouldTriggerGeneration) {
+        SoundEngine.playFanfare();
+        runHapticPop('heavy');
         generateContextualPlans();
         saveUserData();
       }
@@ -443,45 +557,44 @@
       const recipeContainer = document.getElementById('recipe-vault-container');
       
       let routineHtml = ""; let videoHtml = ""; let recipeHtml = "";
-      let horizonText = timeframe === "4_weeks" ? "4-Week Base Acceleration" : (timeframe === "6_months" ? "6-Month Intermediate Horizon" : "1-Year Master Plan");
+      let horizonText = timeframe === "4_weeks" ? "4-Week Base Acceleration" : (timeframe === "6_months" ? "6-Month Intermediate Horizon" : "1-Year Master Sovereign Plan");
       
-      routineHtml += `<div class="text-cyan-400 font-bold mb-1">[Phase Target: ${horizonText} | Target: ${targetWeight}kg]</div>`;
+      routineHtml += `<div class="text-cyan-400 font-bold mb-1">[Phase Target: ${horizonText} | Plan Goal: ${targetWeight}kg]</div>`;
 
       if (targetLifestyle === "elite") {
         routineHtml += `
-          <div>• <span class="text-orange-400">Push:</span> Overhead Press (4x8), Dips (3x10), Lateral Shoulder Raises (4x12)</div>
-          <div>• <span class="text-orange-400">Pull:</span> Heavy Barbell Deadlifts (4x5), Pull-Ups (4xMax Volume), Cable Rows (3x12)</div>
-          <div>• <span class="text-orange-400">Legs:</span> Olympic Back Squats (4x6), Romanian Deadlifts (3x10)</div>`;
+          <div>• <span class="text-orange-400">Push Structural:</span> Overhead Press (4x8), Heavy Chest Dips (3x10), Lateral Raises (4x12)</div>
+          <div>• <span class="text-orange-400">Pull Structural:</span> Conventional Deadlifts (4x5), Bodyweight Pull-Ups (4xMax), Cable Rows (3x12)</div>
+          <div>• <span class="text-orange-400">Legs Structural:</span> Barbell Back Squats (4x6), Romanian Deadlifts (3x10)</div>`;
         
         videoHtml = `
           <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-2">
-            <h4 class="font-black text-xs text-white">01 / BARBELL SQUAT FORM</h4>
+            <h4 class="font-black text-xs text-white">01 / SQUAT MASTER KINETICS</h4>
             <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/Uv_KzG_cEGs" frameborder="0" allowfullscreen></iframe>
           </div>
           <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-2">
-            <h4 class="font-black text-xs text-white">02 / PERFECT PUSH-UP SPLIT</h4>
+            <h4 class="font-black text-xs text-white">02 / PERFECT PUSH MECHANICS</h4>
             <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/IODxDxX7oi4" frameborder="0" allowfullscreen></iframe>
           </div>`;
       } else {
         routineHtml += `
-          <div>• <span class="text-cyan-400">Upper Split:</span> Bench Press (3x10), Lat Pulldowns (3x12), Bicep Concentration Curls</div>
-          <div>• <span class="text-cyan-400">Lower Split:</span> Leg Press (4x10), Seated Hamstring Leg Curls (3x15)</div>`;
+          <div>• <span class="text-cyan-400">Upper Compounds:</span> Flat Bench Press (3x10), Wide Lat Pulldowns (3x12)</div>
+          <div>• <span class="text-cyan-400">Lower Compounds:</span> Linear Leg Press (4x10), Hamstring Leg Curls (3x15)</div>`;
         
         videoHtml = `
           <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-2">
-            <h4 class="font-black text-xs text-white">01 / PERFECT PUSH-UP SPLIT</h4>
+            <h4 class="font-black text-xs text-white">01 / PERFECT PUSH MECHANICS</h4>
             <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/IODxDxX7oi4" frameborder="0" allowfullscreen></iframe>
           </div>`;
       }
       
-      // Pull dynamic structured array contents from deep object vault arrays
-      const activeDietArray = REGIONAL_DIET_VAULT[region] || REGIONAL_DIET_VAULT['western'];
-      activeDietArray.forEach(item => {
+      const loadedArray = REGIONAL_DIET_VAULT[region] || REGIONAL_DIET_VAULT['western'];
+      loadedArray.forEach(cardItem => {
         recipeHtml += `
           <div class="bg-zinc-950 rounded-2xl border border-zinc-800 p-3 space-y-2">
-            <img src="${item.img}" class="w-full h-28 object-cover rounded-xl opacity-80">
-            <h4 class="font-black text-sm text-cyan-400">${item.name}</h4>
-            <p class="text-xs text-zinc-400">${item.desc}</p>
+            <img src="${cardItem.img}" class="w-full h-28 object-cover rounded-xl opacity-75">
+            <h4 class="font-black text-sm text-cyan-400">${cardItem.name}</h4>
+            <p class="text-xs text-zinc-400">${cardItem.desc}</p>
           </div>`;
       });
 
@@ -491,47 +604,107 @@
     }
 
     function incrementStreakOnceADay() {
-      const todayString = new Date().toDateString();
-      if (lastStreakDate === todayString) return;
-      streak += 1; lastStreakDate = todayString;
-      calculateClass(false); saveUserData();
+      const stampStr = new Date().toDateString();
+      if (lastStreakDate === stampStr) return;
+      
+      SoundEngine.playTick();
+      runHapticPop('light');
+      
+      streak += 1; 
+      lastStreakDate = stampStr;
+      calculateClass(false); 
+      saveUserData();
     }
 
     function logCustomCalories() {
-      const el = document.getElementById('custom-cal-input');
-      const val = parseInt(el.value, 10);
-      if (!isNaN(val) && val > 0) { calories += val; el.value = ""; saveUserData(); }
-    }
-    function logCustomWater() {
-      const el = document.getElementById('custom-water-input');
-      const val = parseInt(el.value, 10);
-      if (!isNaN(val) && val > 0) { water += val; el.value = ""; saveUserData(); }
+      const fieldNode = document.getElementById('custom-cal-input');
+      const incomingVal = parseInt(fieldNode.value, 10);
+      if (!isNaN(incomingVal) && incomingVal > 0) {
+        SoundEngine.playTick();
+        runHapticPop('light');
+        const legacyCals = calories;
+        calories += incomingVal;
+        fieldNode.value = "";
+        dispatchOdometerTicker('calories', legacyCals, calories, 400);
+        saveUserData();
+      }
     }
 
-    function updateHunterName(newName) { if(newName.trim() !== "") { hunterName = newName; saveUserData(); } }
-    function addCalories(amount) { calories += amount; saveUserData(); }
-    function addWater(amount) { water += amount; saveUserData(); }
-    
-    function addXp(amount) {
-      xp += amount; let targetXp = (level + 1) * 120;
-      while (xp >= targetXp) { xp -= targetXp; level++; targetXp = (level + 1) * 120; alert("🎉 LEVEL UP! Level " + level); }
+    function logCustomWater() {
+      const fieldNode = document.getElementById('custom-water-input');
+      const incomingVal = parseInt(fieldNode.value, 10);
+      if (!isNaN(incomingVal) && incomingVal > 0) {
+        SoundEngine.playTick();
+        runHapticPop('light');
+        const legacyH2O = water;
+        water += incomingVal;
+        fieldNode.value = "";
+        dispatchOdometerTicker('water', legacyH2O, water, 400);
+        saveUserData();
+      }
+    }
+
+    function addCalories(amt) {
+      SoundEngine.playTick();
+      runHapticPop('light');
+      const legacyCals = calories;
+      calories += amt;
+      dispatchOdometerTicker('calories', legacyCals, calories, 400);
       saveUserData();
     }
+
+    function addWater(amt) {
+      SoundEngine.playTick();
+      runHapticPop('light');
+      const legacyH2O = water;
+      water += amt;
+      dispatchOdometerTicker('water', legacyH2O, water, 400);
+      saveUserData();
+    }
+    
+    function addXp(amt) {
+      SoundEngine.playTick();
+      runHapticPop('light');
+      
+      xp += amt; 
+      let adaptiveTargetXP = (level + 1) * 120;
+      
+      if (xp >= adaptiveTargetXP) {
+        xp -= adaptiveTargetXP;
+        level++;
+        
+        // AAA Structural UI Level Flash Response Trigger
+        SoundEngine.playFanfare();
+        runHapticPop('heavy');
+        
+        document.body.classList.add('level-up-flash');
+        setTimeout(() => document.body.classList.remove('level-up-flash'), 500);
+        
+        const textTargetNode = document.getElementById('level-desk');
+        textTargetNode.classList.add('scale-125', 'text-yellow-400');
+        setTimeout(() => textTargetNode.classList.remove('scale-125', 'text-yellow-400'), 400);
+      }
+      updateUIValues();
+      saveUserData();
+    }
+
     function completeQuest() { addXp(50); }
     function logWorkout() { addXp(35); }
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-page').forEach(page => page.classList.add('hidden'));
+    function updateHunterName(v) { if(v.trim() !== "") { hunterName = v; saveUserData(); } }
+
+    function switchTab(targetId) {
+      document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
       document.getElementById('nav-dashboard').className = "flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition";
       document.getElementById('nav-exercises').className = "flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition";
       document.getElementById('nav-blueprint').className = "flex flex-col items-center gap-1 py-2 text-zinc-500 font-bold text-xs transition";
       
-      document.getElementById('page-' + tabId).classList.remove('hidden');
-      document.getElementById('nav-' + tabId).className = "flex flex-col items-center gap-1 py-2 text-cyan-400 font-bold text-xs transition";
+      document.getElementById('page-' + targetId).classList.remove('hidden');
+      document.getElementById('nav-' + targetId).className = "flex flex-col items-center gap-1 py-2 text-cyan-400 font-bold text-xs transition";
     }
 
     function resetProgress() {
-      if (confirm("🚨 Reset profile to factory tracking defaults?")) {
+      if (confirm("🚨 Wipe character configuration matrix back to tracking defaults?")) {
         xp = 0; level = 0; calories = 0; water = 0; streak = 0; lastStreakDate = "";
         weight = 70; targetWeight = 65; height = 175; lifestyle = "moderate"; targetLifestyle = "elite"; timeframe = "6_months"; region = "western"; avatarSkin = "real";
         saveUserData(); switchTab('dashboard');
