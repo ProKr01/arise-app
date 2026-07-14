@@ -15,7 +15,7 @@
     
     <aside class="lg:col-span-4 lg:block space-y-6 p-4 lg:p-0">
       <header class="flex justify-between items-center lg:mb-2">
-        <h1 class="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">ARISE ⚔️</h1>
+        <h1 class="text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">ProFit++ ⚔️</h1>
         <div class="text-right lg:hidden">
           <div class="text-emerald-400 text-2xl font-bold" id="level-mob">Lv. 0</div>
           <div id="xp-mob" class="text-zinc-400 text-sm font-medium">0 / 120 XP</div>
@@ -119,7 +119,9 @@
         
         <div class="bg-zinc-900 rounded-3xl border border-purple-900/30 p-5 space-y-2">
           <h3 class="font-black text-xs text-purple-400 uppercase tracking-widest flex items-center gap-2">🏋️ Tailored Routine Split Plan</h3>
-          <div id="dynamic-routine-box" class="text-sm space-y-2 text-zinc-300 font-mono bg-zinc-950 p-4 rounded-xl border border-zinc-800"></div>
+          <div id="dynamic-routine-box" class="text-sm space-y-2 text-zinc-300 font-mono bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+            Click "Generate System Blueprint" on the Blueprint tab to load your specialized routine.
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="video-vault-container"></div>
@@ -135,21 +137,25 @@
         <div class="bg-zinc-900 p-5 rounded-3xl border border-zinc-800 space-y-4">
           <h3 class="font-black text-sm text-zinc-400 uppercase tracking-widest border-b border-zinc-800 pb-2">📊 Baseline Metrics & Targets</h3>
           
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs text-zinc-400 font-bold mb-1">Weight (kg)</label>
-              <input type="number" id="input-weight" value="70" oninput="calculateClass()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold">
+              <label class="block text-xs text-zinc-400 font-bold mb-1">Current Weight (kg)</label>
+              <input type="number" id="input-weight" value="70" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold">
+            </div>
+            <div>
+              <label class="block text-xs text-zinc-400 font-bold mb-1">Desired Weight (kg)</label>
+              <input type="number" id="input-target-weight" value="65" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold text-emerald-400">
             </div>
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Height (cm)</label>
-              <input type="number" id="input-height" value="175" oninput="calculateClass()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold">
+              <input type="number" id="input-height" value="175" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm focus:outline-none focus:border-cyan-400 font-bold">
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Current Lifestyle</label>
-              <select id="input-lifestyle" onchange="calculateClass()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
+              <select id="input-lifestyle" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="sedentary">Sedentary (Low)</option>
                 <option value="moderate" selected>Active (Gym 3x)</option>
                 <option value="elite">Monarch (Daily)</option>
@@ -157,7 +163,7 @@
             </div>
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Desired Lifestyle</label>
-              <select id="target-lifestyle" onchange="calculateClass()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
+              <select id="target-lifestyle" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="sedentary">Maintain Split</option>
                 <option value="moderate">Lean Build Split</option>
                 <option value="elite" selected>Extreme Shred</option>
@@ -168,7 +174,7 @@
           <div class="grid grid-cols-2 gap-4 border-t border-zinc-800/50 pt-3">
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Projection Horizon</label>
-              <select id="input-timeframe" onchange="calculateClass()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
+              <select id="input-timeframe" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="4_weeks">Short-term (4 Weeks)</option>
                 <option value="6_months" selected>Mid-term (6 Months)</option>
                 <option value="1_year">Long-term (1 Year)</option>
@@ -176,13 +182,17 @@
             </div>
             <div>
               <label class="block text-xs text-zinc-400 font-bold mb-1">Geographic Region</label>
-              <select id="input-region" onchange="calculateClass()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
+              <select id="input-region" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-xs focus:outline-none focus:border-cyan-400 text-white font-bold">
                 <option value="western" selected>Western Palate</option>
                 <option value="asian">Asian Regional Diet</option>
                 <option value="mediterranean">Mediterranean Palate</option>
               </select>
             </div>
           </div>
+
+          <button onclick="calculateClass()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-black text-sm p-4 rounded-2xl tracking-wide transition shadow-lg shadow-blue-950/50 flex items-center justify-center gap-2">
+            <span>✨</span> Generate Interactive Blueprint
+          </button>
 
           <div class="bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-xs text-center font-mono">
             Structural BMI Assessment: <span id="bmi-val" class="text-cyan-400 font-bold">22.9</span>
@@ -200,7 +210,9 @@
 
         <div class="bg-zinc-900 rounded-3xl border border-zinc-800 p-5 space-y-4">
           <h3 class="font-black text-sm text-cyan-400 uppercase tracking-widest">🥗 Regional Cooking Blueprints</h3>
-          <div id="recipe-vault-container" class="space-y-4"></div>
+          <div id="recipe-vault-container" class="space-y-4">
+            <p class="text-xs text-zinc-500 font-mono text-center py-4">Click "Generate System Blueprint" above to build calculations.</p>
+          </div>
         </div>
 
         <button onclick="resetProgress()" class="w-full border border-zinc-900 hover:border-red-950 hover:bg-red-950/20 text-zinc-600 hover:text-red-400 transition p-4 rounded-3xl text-xs font-bold uppercase tracking-widest mt-4">
@@ -240,7 +252,7 @@
     const database = firebase.database();
     
     let xp = 0, level = 0, calories = 0, water = 0, hunterName = "ProKr", streak = 7;
-    let weight = 70, height = 175, lifestyle = "moderate", targetLifestyle = "elite";
+    let weight = 70, targetWeight = 65, height = 175, lifestyle = "moderate", targetLifestyle = "elite";
     let timeframe = "6_months", region = "western";
     let lastStreakDate = "";
     
@@ -257,6 +269,7 @@
           hunterName = data.hunterName || "ProKr";
           streak = Math.round(data.streak || 7);
           weight = Number(data.weight || 70);
+          targetWeight = Number(data.targetWeight || 65);
           height = Number(data.height || 175);
           lifestyle = data.lifestyle || "moderate";
           targetLifestyle = data.targetLifestyle || "elite";
@@ -265,7 +278,7 @@
           lastStreakDate = data.lastStreakDate || "";
           
           updateUIValues();
-          calculateClass();
+          calculateClass(false); // Update baseline indicators without changing active blueprint text states until triggered
         } else {
           saveUserData();
         }
@@ -275,7 +288,7 @@
     function saveUserData() {
       userDbRef.set({
         xp: Math.round(xp), level: Math.round(level), calories: Math.round(calories), water: Math.round(water),
-        hunterName: hunterName, streak: Math.round(streak), weight: Number(weight), height: Number(height),
+        hunterName: hunterName, streak: Math.round(streak), weight: Number(weight), targetWeight: Number(targetWeight), height: Number(height),
         lifestyle: lifestyle, targetLifestyle: targetLifestyle, timeframe: timeframe, region: region, lastStreakDate: lastStreakDate
       });
     }
@@ -295,6 +308,7 @@
       document.getElementById('streak-display').textContent = streak;
       
       document.getElementById('input-weight').value = weight;
+      document.getElementById('input-target-weight').value = targetWeight;
       document.getElementById('input-height').value = height;
       document.getElementById('input-lifestyle').value = lifestyle;
       document.getElementById('target-lifestyle').value = targetLifestyle;
@@ -312,8 +326,9 @@
       }
     }
 
-    function calculateClass() {
+    function calculateClass(shouldTriggerGeneration = true) {
       weight = Number(document.getElementById('input-weight').value) || 70;
+      targetWeight = Number(document.getElementById('input-target-weight').value) || 65;
       height = Number(document.getElementById('input-height').value) || 175;
       lifestyle = document.getElementById('input-lifestyle').value;
       targetLifestyle = document.getElementById('target-lifestyle').value;
@@ -348,11 +363,15 @@
       badge.textContent = "Class: " + hunterClass;
       badge.className = `text-xs font-semibold px-3 py-1 rounded-full border ${badgeColor}`;
 
-      // Dynamic baseline calculations
+      // Calibrate baseline target capacities
       let targetCalBase = weight * 30;
       if (targetLifestyle === "elite") targetCalBase += 600;
       if (targetLifestyle === "sedentary") targetCalBase -= 400;
       
+      // Fine-tune caloric adjustments depending on weight gap goals
+      if (targetWeight < weight) targetCalBase -= 350; // Caloric Deficit allocation
+      else if (targetWeight > weight) targetCalBase += 350; // Caloric Surplus allocation
+
       let targetWaterBase = 2200;
       if (lifestyle === "elite" || targetLifestyle === "elite") targetWaterBase += 1300;
 
@@ -364,7 +383,10 @@
       document.getElementById('macro-c').textContent = Math.round(weight * (targetLifestyle === "elite" ? 2.5 : 3.5)) + "g";
       document.getElementById('macro-f').textContent = Math.round(weight * 0.8) + "g";
 
-      generateContextualPlans();
+      if (shouldTriggerGeneration) {
+        generateContextualPlans();
+        saveUserData();
+      }
     }
 
     function generateContextualPlans() {
@@ -373,10 +395,9 @@
       const recipeContainer = document.getElementById('recipe-vault-container');
       
       let routineHtml = ""; let videoHtml = ""; let recipeHtml = "";
-      
-      // 1. Core Routine Projection Matrix Output
       let horizonText = timeframe === "4_weeks" ? "4-Week Base Acceleration" : (timeframe === "6_months" ? "6-Month Intermediate Horizon" : "1-Year Master Sovereign Plan");
-      routineHtml += `<div class="text-cyan-400 font-bold mb-1">[Phase Target: ${horizonText}]</div>`;
+      
+      routineHtml += `<div class="text-cyan-400 font-bold mb-1">[Phase Target: ${horizonText} | Aiming for ${targetWeight}kg]</div>`;
 
       if (targetLifestyle === "elite") {
         routineHtml += `
@@ -390,7 +411,7 @@
             <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/Uv_KzG_cEGs" frameborder="0" allowfullscreen></iframe>
           </div>
           <div class="bg-zinc-900 p-4 rounded-2xl border border-zinc-800 space-y-2">
-            <h4 class="font-black text-xs text-white">02 / EXTENDED OVERHEAD PRESS</h4>
+            <h4 class="font-black text-xs text-white">02 / PERFECT PUSH-UP SPLIT</h4>
             <iframe class="w-full aspect-video rounded-xl" src="https://www.youtube.com/embed/IODxDxX7oi4" frameborder="0" allowfullscreen></iframe>
           </div>`;
       } else {
@@ -405,7 +426,6 @@
           </div>`;
       }
       
-      // 2. Regional Recipe Palette Injections
       if (region === "asian") {
         recipeHtml = `
           <div class="bg-zinc-950 rounded-2xl border border-zinc-800 p-3 space-y-2">
@@ -438,7 +458,7 @@
       const todayString = new Date().toDateString();
       if (lastStreakDate === todayString) return;
       streak += 1; lastStreakDate = todayString;
-      calculateClass(); saveUserData();
+      calculateClass(false); saveUserData();
     }
 
     function logCustomCalories() {
@@ -472,13 +492,12 @@
       
       document.getElementById('page-' + tabId).classList.remove('hidden');
       document.getElementById('nav-' + tabId).className = "flex flex-col items-center gap-1 py-2 text-cyan-400 font-bold text-xs transition";
-      if(tabId === 'blueprint' || tabId === 'exercises') calculateClass();
     }
 
     function resetProgress() {
       if (confirm("🚨 Reset profile to factory tracking defaults?")) {
         xp = 0; level = 0; calories = 0; water = 0; streak = 0; lastStreakDate = "";
-        weight = 70; height = 175; lifestyle = "moderate"; targetLifestyle = "elite"; timeframe = "6_months"; region = "western";
+        weight = 70; targetWeight = 65; height = 175; lifestyle = "moderate"; targetLifestyle = "elite"; timeframe = "6_months"; region = "western";
         saveUserData(); switchTab('dashboard');
       }
     }
